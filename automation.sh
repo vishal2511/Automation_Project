@@ -53,3 +53,45 @@ s3://${s3_bucket}/${myname}-httpd-logs-${timestamp}.tar
 
 
 #------- Task 2 Ends -------#
+
+#------- Task 3 Starting -------#
+
+# 1 - Bookkeeping - Ensure that your script checks for the presence of the inventory.html file in /var/www/html/; if not found, creates it.
+
+if [ -f "/var/www/html/inventory.html" ]; 
+then
+	
+	printf "<p>" >> /var/www/html/inventory.html
+	printf "\n\t$(ls -lrth /tmp | grep httpd | cut -d ' ' -f 10 | cut -d '-' -f 2,3 | tail -1)" >> /var/www/html/inventory.html
+	printf "\t\t$(ls -lrth /tmp | grep httpd | cut -d ' ' -f 10 | cut -d '-' -f 4,5 | cut -d '.' -f 1 | tail -1)" >> /var/www/html/inventory.html
+	printf "\t\t\t $(ls -lrth /tmp | grep httpd | cut -d ' ' -f 10 | cut -d '-' -f 4,5 | cut -d '.' -f 2 | tail -1 )" >> /var/www/html/inventory.html
+	printf "\t\t\t\t$(ls -lrth /tmp/ | grep httpd | cut -d ' ' -f 6 | tail -1)" >> /var/www/html/inventory.html
+	printf "</p>" >> /var/www/html/inventory.html
+	
+else 
+# 1 - Bookkeeping - If an inventory file already exists, the content of the file should not be deleted or overwritten. New content should be only appended in a new line.
+	touch /var/www/html/inventory.html
+	printf "<p>" >> /var/www/html/inventory.html
+	printf "\tLog-Type\tDate-Created\tType\tSize" >> /var/www/html/inventory.html
+	printf "</p>" >> /var/www/html/inventory.html
+	printf "<p>" >> /var/www/html/inventory.html
+	printf "\n\t$(ls -lrth /tmp | grep httpd | cut -d ' ' -f 10 | cut -d '-' -f 2,3 | tail -1)" >> /var/www/html/inventory.html
+	printf "\t\t$(ls -lrth /tmp | grep httpd | cut -d ' ' -f 10 | cut -d '-' -f 4,5 | cut -d '.' -f 1 | tail -1)" >> /var/www/html/inventory.html
+	printf "\t\t\t $(ls -lrth /tmp | grep httpd | cut -d ' ' -f 10 | cut -d '-' -f 4,5 | cut -d '.' -f 2 | tail -1)" >> /var/www/html/inventory.html
+	printf "\t\t\t\t$(ls -lrth /tmp/ | grep httpd | cut -d ' ' -f 6 |tail -1)" >> /var/www/html/inventory.html
+	printf "</p>" >> /var/www/html/inventory.html
+	
+fi
+
+
+# 2 - Cron Job - Your script should create a cron job file in /etc/cron.d/ with the name 'automation' that runs the script /root/<git repository name>/automation.sh every day via the root user.
+
+if [ -f "/etc/cron.d/automation" ];
+then
+	echo "Automation script is present in /etc/cron.d/"
+else
+	touch /etc/cron.d/automation
+	printf "0 0 * * * root /root/Automation_Project/auotmation.sh" > /etc/cron.d/automation
+fi
+
+#------- Task 3 Ends -------#
